@@ -22,8 +22,6 @@ class NodeModel {
 
 NodeModel parseTree(String input, {int tabSize = 2}) {
   // 각 줄을 나누고 트리 구조를 저장할 스택 초기화
-  print(input);
-  print(input.split('\n'));
   final lines =
       input.split('\n').where((line) => line.trim().isNotEmpty).toList();
   final stack = <NodeModel>[];
@@ -33,7 +31,6 @@ NodeModel parseTree(String input, {int tabSize = 2}) {
   for (var line in lines) {
     final trimmedLine = line.trimLeft();
     final indent = line.length - trimmedLine.length;
-    print(indent);
 
     final depth = indent ~/ tabSize;
 
