@@ -29,18 +29,14 @@ class _MainScreenState extends State<MainScreen> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Enter Mind Map Structure',
-                hintText: 'Root Node\n  Sub Node 1\n    Sub Sub Node 1',
               ),
               maxLines: 5,
+              onChanged: (value) {
+                setState(() {
+                  rootNode = parseTree(value);
+                });
+              },
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                rootNode = parseTree(_controller.text);
-              });
-            },
-            child: Text('Update Mind Map'),
           ),
           Expanded(
             child: InteractiveViewer(
