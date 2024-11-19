@@ -16,6 +16,32 @@ class _MainScreenState extends State<MainScreen> {
   final TextEditingController _controller = TextEditingController();
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // Tab 키 처리 메서드
+  void _handleTabKeyPress() {
+    final currentText = _controller.text;
+    final cursorPosition = _controller.selection.base.offset;
+
+    // Tab을 현재 커서 위치에 삽입
+    final newText = currentText.replaceRange(
+      cursorPosition,
+      cursorPosition,
+      '  ', // Tab 대신 공백 사용
+    );
+
+    setState(() {
+      _controller.text = newText;
+      _controller.selection =
+          TextSelection.collapsed(offset: cursorPosition + 2);
+      rootNode = parseTree(newText); // 노드 트리 업데이트
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Mind Map')),
@@ -32,6 +58,7 @@ class _MainScreenState extends State<MainScreen> {
               ),
               maxLines: 5,
               onChanged: (value) {
+                if (value.trim() == '') return;
                 setState(() {
                   rootNode = parseTree(value);
                 });
