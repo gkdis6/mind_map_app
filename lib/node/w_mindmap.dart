@@ -13,15 +13,13 @@ class MindMapWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MindMapNodeState createState() => _MindMapNodeState();
+  _MindMapWidgetState createState() => _MindMapWidgetState();
 }
 
-class _MindMapNodeState extends State<MindMapWidget> {
+class _MindMapWidgetState extends State<MindMapWidget> {
   bool _isEditing = false; // 이름 편집 모드 여부를 확인하는 변수
   late TextEditingController _controller; // 노드 이름 입력을 위한 컨트롤러
   final FocusNode _focusNode = FocusNode(); // TextField에 포커스를 관리할 FocusNode
-
-  NodeModel rootNode = NodeModel(id: 'root', title: 'Root Node');
 
   @override
   void initState() {
@@ -58,9 +56,7 @@ class _MindMapNodeState extends State<MindMapWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return
-        // 이름을 수정할 수 있는 TextField 추가
-        Row(
+    return Row(
       children: [
         _isEditing
             ? Container(
@@ -105,39 +101,15 @@ class _MindMapNodeState extends State<MindMapWidget> {
                     ],
                   ),
                 ),
-                // Container(
-                //   padding: EdgeInsets.all(8),
-                //   decoration: BoxDecoration(
-                //     color: widget.node.color,
-                //     borderRadius: BorderRadius.circular(8),
-                //   ),
-                //   child: Text(widget.node.title,
-                //       style: TextStyle(color: Colors.white)),
-                // ),
               ),
         if (widget.node.children.isNotEmpty)
           MindMap(
             dotRadius: 4,
             children: widget.node.children
-                .map((child) => _buildMindMap(child)) // 자식 노드 재귀 렌더링
+                .map((child) => MindMapWidget(node: child)) // 재귀 호출
                 .toList(),
           ),
       ],
     );
   }
-}
-
-Widget _buildMindMap(NodeModel node) {
-  return Row(
-    children: [
-      MindMapWidget(node: node),
-      if (node.children.isNotEmpty)
-        MindMap(
-          dotRadius: 4,
-          children: node.children
-              .map((child) => _buildMindMap(child)) // 자식 노드 재귀 렌더링
-              .toList(),
-        ),
-    ],
-  );
 }

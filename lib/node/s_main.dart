@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mind_map/mind_map.dart';
 
 import 'm_node.dart';
 import 'w_mindmap.dart';
@@ -10,43 +9,48 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // 최상위 노드 생성
-  // NodeModel rootNode = NodeModel(id: '1', title: 'Root Node');
-  NodeModel rootNode = parseTree('''
-Root Node
-  Sub Node 1
-    Sub Sub Node 1
-  Sub Node 2
-''');
+  // 초기 노드
+  NodeModel rootNode = parseTree('Root Node');
 
-  Widget _buildMindMap(NodeModel node) {
-    return Row(
-      children: [
-        MindMapWidget(node: node),
-        if (node.children.isNotEmpty)
-          MindMap(
-            dotRadius: 4,
-            children: node.children
-                .map((child) => _buildMindMap(child)) // 자식 노드 재귀 렌더링
-                .toList(),
-          ),
-      ],
-    );
-  }
+  // 텍스트 컨트롤러
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Mind Map')),
-      body: Container(
-        width: 3000, // 충분히 큰 값
-        height: 3000, // 충분히 큰 값
-        child: InteractiveViewer(
-          boundaryMargin: EdgeInsets.all(double.infinity),
-          minScale: 0.5,
-          maxScale: 2.0,
-          child: _buildMindMap(rootNode),
-        ),
+      body: Column(
+        children: [
+          // 사용자 입력 필드
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Enter Mind Map Structure',
+                hintText: 'Root Node\n  Sub Node 1\n    Sub Sub Node 1',
+              ),
+              maxLines: 5,
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                rootNode = parseTree(_controller.text);
+              });
+            },
+            child: Text('Update Mind Map'),
+          ),
+          Expanded(
+            child: InteractiveViewer(
+              constrained: false,
+              minScale: 0.5,
+              maxScale: 2.0,
+              child: MindMapWidget(node: rootNode),
+            ),
+          ),
+        ],
       ),
     );
   }
