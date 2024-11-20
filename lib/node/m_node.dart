@@ -53,3 +53,21 @@ NodeModel parseTree(String input, {int tabSize = 2}) {
 
   return root!;
 }
+
+String stringifyTree(NodeModel root, {int tabSize = 2}) {
+  final buffer = StringBuffer();
+
+  void _dfs(NodeModel node, int depth) {
+    // 현재 노드의 제목을 추가
+    final indent = ' ' * (depth * tabSize);
+    buffer.writeln('$indent${node.title}');
+
+    // 자식 노드를 재귀적으로 순회
+    for (final child in node.children) {
+      _dfs(child, depth + 1);
+    }
+  }
+
+  _dfs(root, 0); // 루트 노드부터 시작
+  return buffer.toString();
+}
