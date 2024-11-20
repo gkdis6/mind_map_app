@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'm_node.dart';
 import 'w_mindmap.dart';
+import 'w_textfield.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -14,10 +15,12 @@ class _MainScreenState extends State<MainScreen> {
 
   // 텍스트 컨트롤러
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void dispose() {
     _controller.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -50,19 +53,15 @@ class _MainScreenState extends State<MainScreen> {
           // 사용자 입력 필드
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
+            child: TextFieldWidget(
               controller: _controller,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Enter Mind Map Structure',
-              ),
-              maxLines: 5,
-              onChanged: (value) {
-                if (value.trim() == '') return;
+              focusNode: _focusNode,
+              onNodeUpdated: (updatedNode) {
                 setState(() {
-                  rootNode = parseTree(value);
+                  rootNode = updatedNode;
                 });
               },
+              onTabKeyPress: _handleTabKeyPress,
             ),
           ),
           Expanded(
