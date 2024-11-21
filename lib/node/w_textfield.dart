@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'm_node.dart'; // parseTree 메서드와 NodeModel을 가져옵니다.
+import 'm_node.dart';
+import 'p_noTraversal.dart'; // parseTree 메서드와 NodeModel을 가져옵니다.
 
 class TextFieldWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -19,26 +20,28 @@ class TextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RawKeyboardListener(
-      focusNode: focusNode,
-      onKey: (RawKeyEvent event) {
-        if (event is RawKeyDownEvent &&
-            event.logicalKey == LogicalKeyboardKey.tab) {
-          onTabKeyPress();
-          return;
-        }
-      },
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: 'Enter Mind Map Structure',
-        ),
-        maxLines: 5,
-        onChanged: (value) {
-          if (value.trim() == '') return;
-          onNodeUpdated(parseTree(value));
+    return FocusTraversalGroup(
+      policy: NoTraversalPolicy(),
+      child: RawKeyboardListener(
+        focusNode: focusNode,
+        onKey: (RawKeyEvent event) {
+          if (event.isKeyPressed(LogicalKeyboardKey.tab)) {
+            onTabKeyPress();
+            return;
+          }
         },
+        child: TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(),
+            labelText: 'Enter Mind Map Structure',
+          ),
+          maxLines: 5,
+          onChanged: (value) {
+            if (value.trim() == '') return;
+            onNodeUpdated(parseTree(value));
+          },
+        ),
       ),
     );
   }
