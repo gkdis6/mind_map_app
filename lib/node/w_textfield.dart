@@ -9,6 +9,7 @@ class TextFieldWidget extends StatelessWidget {
   final FocusNode focusNode;
   final void Function(NodeModel rootNode) onNodeUpdated;
   final void Function() onTabKeyPress;
+  final void Function() onShiftTabKeyPress;
 
   const TextFieldWidget({
     Key? key,
@@ -16,6 +17,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.focusNode,
     required this.onNodeUpdated,
     required this.onTabKeyPress,
+    required this.onShiftTabKeyPress,
   }) : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class TextFieldWidget extends StatelessWidget {
         focusNode: focusNode,
         onKey: (RawKeyEvent event) {
           if (event.isKeyPressed(LogicalKeyboardKey.tab)) {
-            onTabKeyPress();
+            event.isShiftPressed ? onShiftTabKeyPress() : onTabKeyPress();
             return;
           }
         },

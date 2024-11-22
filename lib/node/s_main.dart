@@ -24,24 +24,71 @@ class _MainScreenState extends State<MainScreen> {
     super.dispose();
   }
 
-  // Tab 키 처리 메서드
-  void _handleTabKeyPress() {
-    final currentText = _controller.text;
+  // 들여쓰기 증가 (Tab)
+  void _increaseDepth() {
     final cursorPosition = _controller.selection.base.offset;
+    final lines = _controller.text.split('\n');
+    int currentLineIndex = 0;
+    int currentCharCount = 0;
 
-    // Tab을 현재 커서 위치에 삽입
-    final newText = currentText.replaceRange(
-      cursorPosition,
-      cursorPosition,
-      '  ', // Tab 대신 공백 사용
-    );
+    // 커서 위치에서 해당 라인 탐색
+    for (int i = 0; i < lines.length; i++) {
+      currentCharCount += lines[i].length + 1; // 줄 바꿈 포함
+      if (currentCharCount > cursorPosition) {
+        currentLineIndex = i;
+        break;
+      }
+    }
+
+    // 현재 줄 업데이트
+    final updatedLine = '  ${lines[currentLineIndex]}'; // 들여쓰기 추가
+    lines[currentLineIndex] = updatedLine;
+
+    // 텍스트 갱신
+    final newText = lines.join('\n');
+    _controller.text = newText;
+    _controller.selection = TextSelection.collapsed(
+      offset: cursorPosition + 2,
+    ); // 커서 위치 조정
 
     setState(() {
-      _controller.text = newText;
-      _controller.selection =
-          TextSelection.collapsed(offset: cursorPosition + 2);
       rootNode = parseTree(newText); // 노드 트리 업데이트
     });
+  }
+
+  // 들여쓰기 감소 (Shift+Tab)
+  void _decreaseDepth() {
+    final cursorPosition = _controller.selection.base.offset;
+    final lines = _controller.text.split('\n');
+    int currentLineIndex = 0;
+    int currentCharCount = 0;
+
+    // 커서 위치에서 해당 라인 탐색
+    for (int i = 0; i < lines.length; i++) {
+      currentCharCount += lines[i].length + 1; // 줄 바꿈 포함
+      if (currentCharCount > cursorPosition) {
+        currentLineIndex = i;
+        break;
+      }
+    }
+
+    // 현재 줄 업데이트
+    final currentLine = lines[currentLineIndex];
+    if (currentLine.startsWith('  ')) {
+      final updatedLine = currentLine.substring(2); // 들여쓰기 제거
+      lines[currentLineIndex] = updatedLine;
+
+      // 텍스트 갱신
+      final newText = lines.join('\n');
+      _controller.text = newText;
+      _controller.selection = TextSelection.collapsed(
+        offset: cursorPosition - 2,
+      ); // 커서 위치 조정
+
+      setState(() {
+        rootNode = parseTree(newText); // 노드 트리 업데이트
+      });
+    }
   }
 
   @override
@@ -61,7 +108,8 @@ class _MainScreenState extends State<MainScreen> {
                   rootNode = updatedNode;
                 });
               },
-              onTabKeyPress: _handleTabKeyPress,
+              onTabKeyPress: _increaseDepth,
+              onShiftTabKeyPress: _decreaseDepth,
             ),
           ),
           Expanded(
