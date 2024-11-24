@@ -17,6 +17,9 @@ class _MainScreenState extends State<MainScreen> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
+  // 확대된 뷰 상태
+  String? expandedView; // 'textField' 또는 'mindMap', 기본값은 null
+
   @override
   void dispose() {
     _controller.dispose();
@@ -91,36 +94,93 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  void _toggleExpandedView(String view) {
+    setState(() {
+      if (expandedView == view) {
+        expandedView = null; // 이미 확대된 뷰를 다시 축소
+      } else {
+        expandedView = view; // 새로운 뷰를 확대
+      }
+    });
+  }
+
+  Widget _buildTextFieldContainer() {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: TextFieldWidget(
+            controller: _controller,
+            focusNode: _focusNode,
+            onNodeUpdated: (updatedNode) {
+              setState(() {
+                rootNode = updatedNode;
+              });
+            },
+            onTabKeyPress: _increaseDepth,
+            onShiftTabKeyPress: _decreaseDepth,
+          ),
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: IconButton(
+            icon: Icon(
+              expandedView == 'textField' ? Icons.close : Icons.fullscreen,
+            ),
+            onPressed: () => _toggleExpandedView('textField'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMindMapContainer() {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: InteractiveViewer(
+            constrained: false,
+            minScale: 0.5,
+            maxScale: 2.0,
+            child: MindMapWidget(node: rootNode),
+          ),
+        ),
+        Positioned(
+          top: 8,
+          right: 8,
+          child: IconButton(
+            icon: Icon(
+              expandedView == 'mindMap' ? Icons.close : Icons.fullscreen,
+            ),
+            onPressed: () => _toggleExpandedView('mindMap'),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Mind Map')),
-      body: Column(
-        children: [
-          // 사용자 입력 필드
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFieldWidget(
-              controller: _controller,
-              focusNode: _focusNode,
-              onNodeUpdated: (updatedNode) {
-                setState(() {
-                  rootNode = updatedNode;
-                });
-              },
-              onTabKeyPress: _increaseDepth,
-              onShiftTabKeyPress: _decreaseDepth,
-            ),
-          ),
-          Expanded(
-            child: InteractiveViewer(
-              constrained: false,
-              minScale: 0.5,
-              maxScale: 2.0,
-              child: MindMapWidget(node: rootNode),
-            ),
-          ),
-        ],
+      body: AnimatedSwitcher(
+        duration: Duration(milliseconds: 300),
+        child: expandedView == null
+            ? Column(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: _buildTextFieldContainer(),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: _buildMindMapContainer(),
+                  ),
+                ],
+              )
+            : expandedView == 'textField'
+                ? _buildTextFieldContainer()
+                : _buildMindMapContainer(),
       ),
     );
   }
