@@ -125,7 +125,9 @@ class _MainScreenState extends State<MainScreen> {
           right: 8,
           child: IconButton(
             icon: Icon(
-              expandedView == 'textField' ? Icons.close : Icons.fullscreen,
+              expandedView == 'textField'
+                  ? Icons.fullscreen_exit
+                  : Icons.fullscreen,
             ),
             onPressed: () => _toggleExpandedView('textField'),
           ),
@@ -150,7 +152,9 @@ class _MainScreenState extends State<MainScreen> {
           right: 8,
           child: IconButton(
             icon: Icon(
-              expandedView == 'mindMap' ? Icons.close : Icons.fullscreen,
+              expandedView == 'mindMap'
+                  ? Icons.fullscreen_exit
+                  : Icons.fullscreen,
             ),
             onPressed: () => _toggleExpandedView('mindMap'),
           ),
