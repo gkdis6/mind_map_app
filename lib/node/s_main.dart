@@ -104,7 +104,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Widget _buildTextFieldContainer() {
+  Widget _buildTextFieldContainer(int maxLines) {
     return Stack(
       children: [
         Positioned.fill(
@@ -118,6 +118,7 @@ class _MainScreenState extends State<MainScreen> {
             },
             onTabKeyPress: _increaseDepth,
             onShiftTabKeyPress: _decreaseDepth,
+            maxLines: maxLines,
           ),
         ),
         Positioned(
@@ -142,7 +143,7 @@ class _MainScreenState extends State<MainScreen> {
         Positioned.fill(
           child: InteractiveViewer(
             constrained: false,
-            minScale: 0.5,
+            minScale: 0.1,
             maxScale: 2.0,
             child: MindMapWidget(node: rootNode),
           ),
@@ -174,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: _buildTextFieldContainer(),
+                    child: _buildTextFieldContainer(5),
                   ),
                   Expanded(
                     flex: 2,
@@ -183,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               )
             : expandedView == 'textField'
-                ? _buildTextFieldContainer()
+                ? _buildTextFieldContainer(20)
                 : _buildMindMapContainer(),
       ),
     );

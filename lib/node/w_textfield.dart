@@ -10,6 +10,7 @@ class TextFieldWidget extends StatelessWidget {
   final void Function(NodeModel rootNode) onNodeUpdated;
   final void Function() onTabKeyPress;
   final void Function() onShiftTabKeyPress;
+  final int maxLines;
 
   const TextFieldWidget({
     Key? key,
@@ -18,6 +19,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.onNodeUpdated,
     required this.onTabKeyPress,
     required this.onShiftTabKeyPress,
+    required this.maxLines,
   }) : super(key: key);
 
   @override
@@ -38,7 +40,7 @@ class TextFieldWidget extends StatelessWidget {
             border: OutlineInputBorder(),
             labelText: 'Enter Mind Map Structure',
           ),
-          maxLines: 5,
+          maxLines: this.maxLines,
           onChanged: (value) {
             if (value.trim() == '') return;
             onNodeUpdated(parseTree(value));
