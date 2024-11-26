@@ -104,7 +104,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Widget _buildTextFieldContainer(int maxLines) {
+  Widget _buildTextFieldContainer(int? maxLines) {
     return Stack(
       children: [
         Positioned.fill(
@@ -184,7 +184,7 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               )
             : expandedView == 'textField'
-                ? _buildTextFieldContainer(20)
+                ? _buildTextFieldContainer(null)
                 : _buildMindMapContainer(),
       ),
     );

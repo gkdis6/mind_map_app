@@ -10,7 +10,7 @@ class TextFieldWidget extends StatelessWidget {
   final void Function(NodeModel rootNode) onNodeUpdated;
   final void Function() onTabKeyPress;
   final void Function() onShiftTabKeyPress;
-  final int maxLines;
+  final int? maxLines;
 
   const TextFieldWidget({
     Key? key,
