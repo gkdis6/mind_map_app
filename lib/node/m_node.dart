@@ -26,29 +26,29 @@ NodeModel parseTree(String input, {int tabSize = 2}) {
       input.split('\n').where((line) => line.trim().isNotEmpty).toList();
   final stack = <NodeModel>[];
 
-  NodeModel? root;
-
+  NodeModel root = NodeModel(id: '0', title: 'Root Node');
+  stack.add(root);
   for (var line in lines) {
     final trimmedLine = line.trimLeft();
     final indent = line.length - trimmedLine.length;
 
-    final depth = indent ~/ tabSize;
+    final depth = (indent ~/ tabSize) + 1;
 
     final newNode = NodeModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: trimmedLine);
 
-    if (depth == 0) {
-      root = newNode;
-      stack.clear();
-      stack.add(newNode);
-    } else {
-      while (stack.length > depth) {
-        stack.removeLast();
-      }
-      stack.last.children.add(newNode);
-      stack.add(newNode);
+    // if (depth == 0) {
+    //   root = newNode;
+    //   stack.clear();
+    //   stack.add(newNode);
+    // } else {
+    while (stack.length > depth) {
+      stack.removeLast();
     }
+    stack.last.children.add(newNode);
+    stack.add(newNode);
+    // }
   }
 
   return root!;

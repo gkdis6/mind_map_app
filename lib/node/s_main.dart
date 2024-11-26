@@ -11,7 +11,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   // 초기 노드
-  NodeModel rootNode = parseTree('Root Node');
+  NodeModel rootNode = parseTree('');
 
   // 텍스트 컨트롤러
   final TextEditingController _controller = TextEditingController();
