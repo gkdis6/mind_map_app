@@ -49,6 +49,13 @@ class _NoteListScreenState extends State<NoteListScreen> {
     ).then((_) => _loadNotes());
   }
 
+  void _deleteNote(Note note) {
+    NoteStorage.deleteNoteById(note.id);
+    setState(() {
+      notes.remove(note);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +66,10 @@ class _NoteListScreenState extends State<NoteListScreen> {
           return ListTile(
             title: Text(notes[index].title),
             onTap: () => _openNote(notes[index]),
+            trailing: IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () => _deleteNote(notes[index]),
+            ),
           );
         },
       ),
