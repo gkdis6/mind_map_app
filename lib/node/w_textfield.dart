@@ -43,7 +43,6 @@ class TextFieldWidget extends StatelessWidget {
           ),
           maxLines: this.maxLines,
           onChanged: (value) {
-            if (value.trim() == '') return;
             onNodeUpdated(parseTree(this.rootName, value));
           },
         ),
