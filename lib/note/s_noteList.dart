@@ -35,7 +35,9 @@ class _NoteListScreenState extends State<NoteListScreen> {
     // ID 증가
     await NoteStorage.incrementId();
     await NoteStorage.saveNote(newNote);
-    setState(() {});
+    setState(() {
+      notes.add(newNote);
+    });
   }
 
   void _openNote(Note note) {
