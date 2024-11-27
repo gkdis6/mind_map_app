@@ -202,7 +202,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Mind Map')),
+      appBar: AppBar(title: Text(widget.note.title)),
       body: AnimatedSwitcher(
         duration: Duration(milliseconds: 300),
         child: expandedView == null
