@@ -1,30 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:mind_map_app/note/m_note.dart';
+import 'package:mind_map_app/note/storage_node.dart';
 
 import 'm_node.dart';
 import 'w_mindmap.dart';
 import 'w_textfield.dart';
 
 class MainScreen extends StatefulWidget {
+  final Note note;
+
+  MainScreen({required this.note});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // 초기 노드
-  NodeModel rootNode = parseTree('');
-
-  // 텍스트 컨트롤러
-  final TextEditingController _controller = TextEditingController();
+  late NodeModel rootNode;
+  late TextEditingController _controller;
   final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.note.content);
+    rootNode = parseTree(widget.note.title, widget.note.content);
+  }
 
   // 확대된 뷰 상태
   String? expandedView; // 'textField' 또는 'mindMap', 기본값은 null
+  bool flipMode = false;
 
   @override
   void dispose() {
     _controller.dispose();
-    _focusNode.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveNote() async {
+    final updatedNote = Note(
+      id: widget.note.id,
+      title: widget.note.title,
+      content: _controller.text,
+    );
+    await NoteStorage.saveNote(updatedNote);
   }
 
   // 들여쓰기 증가 (Tab)
@@ -55,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
     ); // 커서 위치 조정
 
     setState(() {
-      rootNode = parseTree(newText); // 노드 트리 업데이트
+      rootNode = parseTree(widget.note.title, newText); // 노드 트리 업데이트
     });
   }
 
@@ -89,7 +108,7 @@ class _MainScreenState extends State<MainScreen> {
       ); // 커서 위치 조정
 
       setState(() {
-        rootNode = parseTree(newText); // 노드 트리 업데이트
+        rootNode = parseTree(widget.note.title, newText); // 노드 트리 업데이트
       });
     }
   }
@@ -104,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Widget _buildTextFieldContainer(int? maxLines) {
+  Widget _buildTextFieldContainer(String rootName, int? maxLines) {
     return Stack(
       children: [
         Positioned.fill(
@@ -114,11 +133,13 @@ class _MainScreenState extends State<MainScreen> {
             onNodeUpdated: (updatedNode) {
               setState(() {
                 rootNode = updatedNode;
+                _saveNote();
               });
             },
             onTabKeyPress: _increaseDepth,
             onShiftTabKeyPress: _decreaseDepth,
             maxLines: maxLines,
+            rootName: rootName,
           ),
         ),
         Positioned(
@@ -150,6 +171,20 @@ class _MainScreenState extends State<MainScreen> {
         ),
         Positioned(
           top: 8,
+          right: 40,
+          child: IconButton(
+            icon: Icon(
+              flipMode ? Icons.visibility_off : Icons.visibility,
+            ),
+            onPressed: () => {
+              setState(() {
+                flipMode = !flipMode;
+              })
+            },
+          ),
+        ),
+        Positioned(
+          top: 8,
           right: 8,
           child: IconButton(
             icon: Icon(
@@ -175,7 +210,7 @@ class _MainScreenState extends State<MainScreen> {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: _buildTextFieldContainer(5),
+                    child: _buildTextFieldContainer(widget.note.title, 5),
                   ),
                   Expanded(
                     flex: 2,
@@ -184,7 +219,7 @@ class _MainScreenState extends State<MainScreen> {
                 ],
               )
             : expandedView == 'textField'
-                ? _buildTextFieldContainer(null)
+                ? _buildTextFieldContainer(widget.note.title, null)
                 : _buildMindMapContainer(),
       ),
     );

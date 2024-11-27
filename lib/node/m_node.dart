@@ -7,6 +7,7 @@ class NodeModel {
   Color color;
   String? memo;
   bool isStar;
+  bool isFlip;
   List<NodeModel> children;
 
   NodeModel({
@@ -15,18 +16,20 @@ class NodeModel {
     this.color = Colors.blueAccent,
     String? memo,
     bool? isStar,
+    bool? isFlip,
     List<NodeModel>? children,
   })  : children = children ?? [],
-        isStar = isStar ?? false;
+        isStar = isStar ?? false,
+        isFlip = isFlip ?? false;
 }
 
-NodeModel parseTree(String input, {int tabSize = 2}) {
+NodeModel parseTree(String rootName, String input, {int tabSize = 2}) {
   // 각 줄을 나누고 트리 구조를 저장할 스택 초기화
   final lines =
       input.split('\n').where((line) => line.trim().isNotEmpty).toList();
   final stack = <NodeModel>[];
 
-  NodeModel root = NodeModel(id: '0', title: 'Root Node');
+  NodeModel root = NodeModel(id: '0', title: rootName);
   stack.add(root);
   for (var line in lines) {
     final trimmedLine = line.trimLeft();

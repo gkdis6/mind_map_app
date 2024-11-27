@@ -11,6 +11,7 @@ class TextFieldWidget extends StatelessWidget {
   final void Function() onTabKeyPress;
   final void Function() onShiftTabKeyPress;
   final int? maxLines;
+  final String rootName;
 
   const TextFieldWidget({
     Key? key,
@@ -20,6 +21,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.onTabKeyPress,
     required this.onShiftTabKeyPress,
     required this.maxLines,
+    required this.rootName,
   }) : super(key: key);
 
   @override
@@ -43,7 +45,7 @@ class TextFieldWidget extends StatelessWidget {
           maxLines: this.maxLines,
           onChanged: (value) {
             if (value.trim() == '') return;
-            onNodeUpdated(parseTree(value));
+            onNodeUpdated(parseTree(this.rootName, value));
           },
         ),
       ),
