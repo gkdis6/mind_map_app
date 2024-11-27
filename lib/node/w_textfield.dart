@@ -40,7 +40,6 @@ class TextFieldWidget extends StatelessWidget {
           controller: controller,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
-            labelText: 'Enter Mind Map Structure',
           ),
           maxLines: this.maxLines,
           onChanged: (value) {
