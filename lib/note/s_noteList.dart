@@ -56,6 +56,49 @@ class _NoteListScreenState extends State<NoteListScreen> {
     });
   }
 
+  void _editNoteName(Note note) async {
+    TextEditingController _editController =
+        TextEditingController(text: note.title);
+
+    final updatedTitle = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Edit Note Name'),
+          content: TextField(
+            controller: _editController,
+            decoration: InputDecoration(
+              labelText: 'Note Name',
+              hintText: 'Enter new name',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, null), // 취소
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final newName = _editController.text.trim();
+                if (newName.isNotEmpty) {
+                  Navigator.pop(context, newName); // 입력된 이름 반환
+                }
+              },
+              child: Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (updatedTitle != null && updatedTitle.isNotEmpty) {
+      // 노트 이름 업데이트
+      note.title = updatedTitle;
+      await NoteStorage.saveNote(note); // 변경사항 저장
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,9 +109,17 @@ class _NoteListScreenState extends State<NoteListScreen> {
           return ListTile(
             title: Text(notes[index].title),
             onTap: () => _openNote(notes[index]),
-            trailing: IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () => _deleteNote(notes[index]),
+            trailing: Column(
+              children: [
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () => _editNoteName(notes[index]),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => _deleteNote(notes[index]),
+                ),
+              ],
             ),
           );
         },
