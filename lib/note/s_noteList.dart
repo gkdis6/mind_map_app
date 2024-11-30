@@ -109,7 +109,8 @@ class _NoteListScreenState extends State<NoteListScreen> {
           return ListTile(
             title: Text(notes[index].title),
             onTap: () => _openNote(notes[index]),
-            trailing: Column(
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min, // Row의 크기를 최소화
               children: [
                 IconButton(
                   icon: Icon(Icons.edit),
