@@ -1,4 +1,3 @@
-// lib/widgets/mindmap_node.dart
 import 'package:flutter/material.dart';
 import 'package:mind_map/mind_map.dart';
 
@@ -6,10 +5,12 @@ import 'm_node.dart';
 
 class MindMapWidget extends StatefulWidget {
   final NodeModel node;
+  final bool flipMode; // flipMode를 추가로 받음
 
   const MindMapWidget({
     Key? key,
     required this.node,
+    required this.flipMode,
   }) : super(key: key);
 
   @override
@@ -17,21 +18,20 @@ class MindMapWidget extends StatefulWidget {
 }
 
 class _MindMapWidgetState extends State<MindMapWidget> {
-  bool _isEditing = false; // 이름 편집 모드 여부를 확인하는 변수
-  late TextEditingController _controller; // 노드 이름 입력을 위한 컨트롤러
-  final FocusNode _focusNode = FocusNode(); // TextField에 포커스를 관리할 FocusNode
+  bool _isEditing = false;
+  late TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.node.title);
 
-    // 포커스가 사라지면 편집 모드를 종료하도록 설정
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus) {
         setState(() {
           _isEditing = false;
-          widget.node.title = _controller.text; // 새 이름 저장
+          widget.node.title = _controller.text;
         });
       }
     });
@@ -51,6 +51,12 @@ class _MindMapWidgetState extends State<MindMapWidget> {
         title: 'Component ${parent.children.length + 1}',
       );
       parent.children.add(newNode);
+    });
+  }
+
+  void _toggleNodeVisibility() {
+    setState(() {
+      widget.node.isFlip = !widget.node.isFlip; // isFlip 상태 전환
     });
   }
 
@@ -75,10 +81,14 @@ class _MindMapWidgetState extends State<MindMapWidget> {
               )
             : GestureDetector(
                 onTap: () {
-                  setState(() {
-                    _isEditing = true;
-                  });
-                  _focusNode.requestFocus();
+                  if (widget.flipMode || widget.node.isFlip) {
+                    _toggleNodeVisibility(); // flipMode가 활성화된 경우 isFlip 변경
+                  } else {
+                    setState(() {
+                      _isEditing = true;
+                    });
+                    _focusNode.requestFocus();
+                  }
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -91,7 +101,7 @@ class _MindMapWidgetState extends State<MindMapWidget> {
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   child: Row(
                     children: [
-                      Text(widget.node.title),
+                      Text(widget.node.isFlip ? '🔒 숨김' : widget.node.title),
                       IconButton(
                         icon: Icon(Icons.add),
                         onPressed: () {
@@ -106,7 +116,8 @@ class _MindMapWidgetState extends State<MindMapWidget> {
           MindMap(
             dotRadius: 4,
             children: widget.node.children
-                .map((child) => MindMapWidget(node: child)) // 재귀 호출
+                .map((child) => MindMapWidget(
+                    node: child, flipMode: widget.flipMode)) // flipMode 전달
                 .toList(),
           ),
       ],

@@ -166,7 +166,7 @@ class _MainScreenState extends State<MainScreen> {
             constrained: false,
             minScale: 0.1,
             maxScale: 2.0,
-            child: MindMapWidget(node: rootNode),
+            child: MindMapWidget(node: rootNode, flipMode: flipMode),
           ),
         ),
         Positioned(
