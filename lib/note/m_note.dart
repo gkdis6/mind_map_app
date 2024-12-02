@@ -2,7 +2,7 @@ import 'package:mind_map_app/node/m_node.dart';
 
 class Note {
   String title;
-  NodeModel node;
+  NodeModel? node;
   int id;
 
   Note({
@@ -12,13 +12,15 @@ class Note {
   });
 
   Map<String, dynamic> toJson() {
-    return {'title': title, 'node': node, 'id': id};
+    return {'title': title, 'node': node?.toJson(), 'id': id};
   }
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
       title: json['title'],
-      node: json['node'],
+      node: json['node'] != null
+          ? NodeModel.fromJson(json['node'] as Map<String, dynamic>)
+          : null,
       id: json['id'],
     );
   }

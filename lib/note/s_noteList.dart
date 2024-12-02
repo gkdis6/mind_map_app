@@ -3,7 +3,7 @@ import 'package:mind_map_app/node/m_node.dart';
 
 import '../node/s_main.dart';
 import 'm_note.dart';
-import 'storage_node.dart';
+import 'storage_note.dart';
 
 class NoteListScreen extends StatefulWidget {
   @override
@@ -29,7 +29,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
     final newId = await NoteStorage.getCurrentId();
     final newNote = Note(
       title: 'New Note ${notes.length + 1}',
-      node: NodeModel(id: '0', title: 'New Note ${notes.length + 1}'),
+      node: NodeModel(id: newId.toString(), title: ''),
       id: newId,
     );
 

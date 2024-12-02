@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mind_map_app/note/m_note.dart';
-import 'package:mind_map_app/note/storage_node.dart';
+import 'package:mind_map_app/note/storage_note.dart';
 
 import 'm_node.dart';
 import 'w_mindmap.dart';
@@ -23,8 +23,11 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: stringifyTree(widget.note.node));
-    rootNode = widget.note.node;
+    rootNode = NodeModel(
+        id: '0',
+        title: widget.note.title,
+        children: widget.note.node?.children);
+    _controller = TextEditingController(text: stringifyTree(rootNode));
   }
 
   // 확대된 뷰 상태

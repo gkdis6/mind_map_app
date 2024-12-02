@@ -31,7 +31,7 @@ class NodeModel {
       'memo': memo,
       'isStar': isStar,
       'isFlip': isFlip,
-      'children': children.map((child) => child.toJson()).toList(),
+      'children': children?.map((child) => child.toJson()).toList(),
     };
   }
 
@@ -49,6 +49,10 @@ class NodeModel {
               .toList() ??
           [],
     );
+  }
+
+  bool hasChild() {
+    return children != null && children != [];
   }
 }
 
@@ -78,7 +82,7 @@ NodeModel parseTree(String rootName, String input, {int tabSize = 2}) {
     while (stack.length > depth) {
       stack.removeLast();
     }
-    stack.last.children.add(newNode);
+    stack.last.children?.add(newNode);
     stack.add(newNode);
     // }
   }
@@ -90,12 +94,9 @@ String stringifyTree(NodeModel root, {int tabSize = 2}) {
   final buffer = StringBuffer();
 
   void _dfs(NodeModel node, int depth) {
-    // 현재 노드의 제목을 추가
-    final indent = ' ' * (depth * tabSize);
-    buffer.writeln('$indent${node.title}');
-
-    // 자식 노드를 재귀적으로 순회
     for (final child in node.children) {
+      final indent = ' ' * (depth * tabSize);
+      buffer.writeln('$indent${child.title}');
       _dfs(child, depth + 1);
     }
   }
