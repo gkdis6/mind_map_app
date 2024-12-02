@@ -78,6 +78,7 @@ class _MainScreenState extends State<MainScreen> {
 
     setState(() {
       rootNode = parseTree(widget.note.title, newText); // 노드 트리 업데이트
+      _saveNote();
     });
   }
 
@@ -112,6 +113,7 @@ class _MainScreenState extends State<MainScreen> {
 
       setState(() {
         rootNode = parseTree(widget.note.title, newText); // 노드 트리 업데이트
+        _saveNote();
       });
     }
   }
