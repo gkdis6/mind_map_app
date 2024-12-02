@@ -23,8 +23,8 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.note.content);
-    rootNode = parseTree(widget.note.title, widget.note.content);
+    _controller = TextEditingController(text: stringifyTree(widget.note.node));
+    rootNode = widget.note.node;
   }
 
   // 확대된 뷰 상태
@@ -41,7 +41,7 @@ class _MainScreenState extends State<MainScreen> {
     final updatedNote = Note(
       id: widget.note.id,
       title: widget.note.title,
-      content: _controller.text,
+      node: rootNode,
     );
     await NoteStorage.saveNote(updatedNote);
   }

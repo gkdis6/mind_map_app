@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mind_map_app/node/m_node.dart';
 
 import '../node/s_main.dart';
 import 'm_note.dart';
@@ -28,7 +29,7 @@ class _NoteListScreenState extends State<NoteListScreen> {
     final newId = await NoteStorage.getCurrentId();
     final newNote = Note(
       title: 'New Note ${notes.length + 1}',
-      content: '',
+      node: NodeModel(id: '0', title: 'New Note ${notes.length + 1}'),
       id: newId,
     );
 

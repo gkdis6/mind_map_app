@@ -14,13 +14,42 @@ class NodeModel {
     required this.id,
     required this.title,
     this.color = Colors.blueAccent,
-    String? memo,
+    this.memo,
     bool? isStar,
     bool? isFlip,
     List<NodeModel>? children,
   })  : children = children ?? [],
         isStar = isStar ?? false,
         isFlip = isFlip ?? false;
+
+  // JSON으로 직렬화
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'color': color.value, // Color를 int로 변환
+      'memo': memo,
+      'isStar': isStar,
+      'isFlip': isFlip,
+      'children': children.map((child) => child.toJson()).toList(),
+    };
+  }
+
+  // JSON에서 객체 생성
+  factory NodeModel.fromJson(Map<String, dynamic> json) {
+    return NodeModel(
+      id: json['id'],
+      title: json['title'],
+      color: Color(json['color']), // int에서 Color로 변환
+      memo: json['memo'],
+      isStar: json['isStar'] ?? false,
+      isFlip: json['isFlip'] ?? false,
+      children: (json['children'] as List<dynamic>?)
+              ?.map((child) => NodeModel.fromJson(child))
+              .toList() ??
+          [],
+    );
+  }
 }
 
 NodeModel parseTree(String rootName, String input, {int tabSize = 2}) {

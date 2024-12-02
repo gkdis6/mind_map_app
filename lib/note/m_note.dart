@@ -1,22 +1,24 @@
+import 'package:mind_map_app/node/m_node.dart';
+
 class Note {
   String title;
-  String content;
+  NodeModel node;
   int id;
 
   Note({
     required this.title,
-    required this.content,
+    required this.node,
     required this.id,
   });
 
   Map<String, dynamic> toJson() {
-    return {'title': title, 'content': content, 'id': id};
+    return {'title': title, 'node': node, 'id': id};
   }
 
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
       title: json['title'],
-      content: json['content'],
+      node: json['node'],
       id: json['id'],
     );
   }
