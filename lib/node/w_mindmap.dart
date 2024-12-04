@@ -54,6 +54,43 @@ class _MindMapWidgetState extends State<MindMapWidget> {
     });
   }
 
+  void _editMemo(NodeModel node) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final memoController = TextEditingController(text: node.memo);
+        return AlertDialog(
+          title: Text('메모 수정'),
+          content: TextField(
+            controller: memoController,
+            maxLines: 5,
+            decoration: InputDecoration(
+              hintText: '메모를 입력하세요...',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  node.memo = memoController.text;
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('저장'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _toggleNodeVisibility() {
     setState(() {
       widget.node.isFlip = !widget.node.isFlip; // isFlip 상태 전환
@@ -103,9 +140,9 @@ class _MindMapWidgetState extends State<MindMapWidget> {
                     children: [
                       Text(widget.node.isFlip ? '🔒 숨김' : widget.node.title),
                       IconButton(
-                        icon: Icon(Icons.add),
+                        icon: Icon(Icons.edit_note),
                         onPressed: () {
-                          _addNode(widget.node);
+                          _editMemo(widget.node);
                         },
                       ),
                     ],
